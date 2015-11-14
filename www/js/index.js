@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -37,6 +20,31 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
+		
+		var request = new XMLHttpRequest();
+		 	
+		request.open("GET", "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", true);
+		
+		request.onreadystatechange = function() {
+			if (request.readyState == 4) {
+				if (request.status == 200 || request.status == 0) {
+					parser = new DOMParser();
+					xmlDoc = parser.parseFromString(request.responseText,"text/xml");
+					var test = xmlDoc.getElementsByTagName("Cube");
+					
+					for (i = 0; i < test.length; i++) {
+						if (test[i].getAttribute("currency") == "USD") {
+							var blub = test[i].getAttributeNode("rate").nodeValue;
+							alert(blub);
+						}
+					}				
+				}
+			}
+		}			
+		
+		
+		request.send();
+		 
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
